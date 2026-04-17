@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issuances - DOTr HRDD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #fbd305;
+            --secondary-color: #005eb8;
+            --text-color: #333;
+            --bg-color: #f4f5f7;
+            --dotr-blue: #123e8f; 
+            --dotr-grey: #6d6d6d; 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+
+        /* Overlays */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .overlay img { max-width: 300px; height: auto; }
+        #not-found { display: none; }
+        #not-found button { margin-top: 20px; padding: 10px 25px; background-color: var(--secondary-color); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+
+        /* Navigation Bar */
+        header { background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 0 5% 0 2%; height: 85px; max-width: 1400px; margin: 0 auto; }
+        
+        .logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; text-decoration: none; }
+        .dotr-seal { width: 55px; height: auto; }
+        .logo-text { display: flex; flex-direction: column; justify-content: center; }
+        .logo-title { font-size: 26px; font-weight: 800; color: var(--dotr-blue); letter-spacing: 0.5px; line-height: 1.1; }
+        .logo-subtitle { font-size: 15px; color: var(--dotr-grey); font-weight: 500; line-height: 1.2; letter-spacing: 0.2px; }
+
+        .nav-links { list-style: none; display: flex; align-items: center; }
+        .nav-links li { position: relative; }
+        .nav-links a { text-decoration: none; color: var(--text-color); padding: 20px 15px; display: block; font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--secondary-color); }
+        .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: white; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; z-index: 1; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { padding: 12px 16px; font-weight: normal; border-bottom: 1px solid #eee; }
+        .dropdown-content a:hover { background-color: var(--bg-color); }
+
+        /* Header for Pages */
+        .page-header { background: var(--dotr-blue); color: white; padding: 60px 20px; text-align: center; }
+        .page-header h1 { font-size: 2.8rem; margin-bottom: 10px; }
+
+        /* Content Blocks */
+        section.content-block { max-width: 1250px; margin: 60px auto; padding: 0 25px; }
+
+        /* Grid */
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .custom-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: 0.3s; display: flex; flex-direction: column; }
+        .custom-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
+        .custom-card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-body { padding: 22px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-body h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--dotr-blue); }
+        .card-body p { font-size: 0.95rem; color: #666; margin-bottom: 20px; line-height: 1.5; }
+        .action-btn { padding: 12px; background-color: var(--secondary-color); color: white; text-align: center; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .action-btn:hover { background-color: #00448a; }
+
+        /* PDF Modal */
+        .pdf-modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(8px); }
+        .modal-inner { background-color: white; margin: 2vh auto; padding: 15px; width: 85%; height: 94vh; border-radius: 12px; position: relative; }
+        .close-modal { color: white; position: absolute; top: -10px; right: -40px; font-size: 40px; cursor: pointer; }
+        iframe { border: none; width: 100%; height: 100%; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <div id="loader" class="overlay"><img src="world.gif" alt="Loading..."></div>
+
+    <div id="not-found" class="overlay">
+        <img src="notfound.gif" alt="Page Not Found">
+        <h2>Page Under Maintenance</h2>
+        <button onclick="hide404()">Return to Dashboard</button>
+    </div>
+
+    <header>
+        <nav>
+            <a href="index.html" class="logo-container">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSShgloc46FB769Q4a6twpBmAN3FGj-ASgHba0nc-CXqg&s&ec=121630468" alt="DOTr Logo" class="dotr-seal">
+                <div class="logo-text">
+                    <span class="logo-title">DOTr - HRDD</span>
+                    <span class="logo-subtitle">Scholarship & Travel Management</span>
+                </div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#" onclick="show404()">About Us</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Travel ▾</a>
+                    <div class="dropdown-content">
+                        <a href="#">Travel Options</a>
+                        <a href="#">Process Flows</a>
+                        <a href="#">Submission Timeline</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Scholarship ▾</a>
+                    <div class="dropdown-content">
+                        <a href="reap-repository.html">REAP Repository</a>
+                    </div>
+                </li>
+                <li><a href="issuances.html" style="color: var(--secondary-color);">Issuances</a></li>
+                <li><a href="#contact-footer">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="page-header">
+        <h1>Official Issuances</h1>
+        <p>Browse and download guidelines, memorandums, and necessary forms.</p>
+    </div>
+
+    <main>
+        <section class="content-block">
+            <div class="grid-layout">
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=800&auto=format&fit=crop" alt="Doc 1"><div class="card-body"><h3>Memorandum Circular No. 50</h3><button class="action-btn" onclick="openPdf('file1.pdf')">View PDF</button></div></div>
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=800&auto=format&fit=crop" alt="Doc 2"><div class="card-body"><h3>Department Order No. 2025-011</h3><button class="action-btn" onclick="openPdf('file2.pdf')">View PDF</button></div></div>
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop" alt="Doc 3"><div class="card-body"><h3>Approving Authority</h3><button class="action-btn" onclick="openPdf('file3.pdf')">View PDF</button></div></div>
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800&auto=format&fit=crop" alt="Doc 4"><div class="card-body"><h3>Executive Order No. 77</h3><button class="action-btn" onclick="openPdf('file4.pdf')">View PDF</button></div></div>
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop" alt="Doc 5"><div class="card-body"><h3>Department Order No. 2023-011</h3><button class="action-btn" onclick="openPdf('file5.pdf')">View PDF</button></div></div>
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1606326666490-45757474e788?q=80&w=800&auto=format&fit=crop" alt="Doc 6"><div class="card-body"><h3>Department Order No. 2023-007</h3><button class="action-btn" onclick="openPdf('file6.pdf')">View PDF</button></div></div>
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=800&auto=format&fit=crop" alt="Doc 7"><div class="card-body"><h3>Department Order No. 2022-024</h3><button class="action-btn" onclick="openPdf('file7.pdf')">View PDF</button></div></div>
+                <div class="custom-card"><img src="https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?q=80&w=800&auto=format&fit=crop" alt="Doc 8"><div class="card-body"><h3>Department Order No. 2021-007</h3><button class="action-btn" onclick="openPdf('file8.pdf')">View PDF</button></div></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="pdfModal" class="pdf-modal">
+        <div class="modal-inner">
+            <span class="close-modal" onclick="closePdf()">&times;</span>
+            <iframe id="viewer" src=""></iframe>
+        </div>
+    </div>
+
+    <footer id="contact-footer" style="position: relative; width: 100%; height: 400px; z-index: 10; overflow: hidden; background-color: #f4f4f4;">
+        <iframe id="google-map" src="https://maps.google.com/maps?q=Department+of+Transportation,+The+Columbia+Tower,+Ortigas+Avenue,+Mandaluyong+City&t=&z=16&ie=UTF8&iwloc=&output=embed" style="position: relative; z-index: 5; width: 100%; height: 100%; border: 0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div style="position: absolute; right: 5%; top: 50%; transform: translateY(-50%); z-index: 10; background-color: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 380px; color: #333;">
+            <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.2rem; font-weight: 700;">Department of Transportation</h3>
+            <p style="margin-bottom: 12px; font-size: 0.95rem; line-height: 1.5;"><i class="fa-solid fa-location-dot" style="color: var(--secondary-color); margin-right: 8px; width: 15px;"></i>The Columbia Tower, Ortigas Avenue, Barangay Wack-Wack, Mandaluyong City, NCR</p>
+            <p style="margin-bottom: 12px; font-size: 0.95rem;"><i class="fa-solid fa-phone" style="color: var(--secondary-color); margin-right: 8px; width: 15px;"></i>local 4401/4402</p>
+            <p style="margin-bottom: 0; font-size: 0.95rem;"><i class="fa-solid fa-envelope" style="color: var(--secondary-color); margin-right: 8px; width: 15px;"></i><a href="mailto:hrdd.ldu@dotr.gov.ph" style="color: #333; text-decoration: none;">hrdd.ldu@dotr.gov.ph</a></p>
+        </div>
+    </footer>
+    <div style="background-color: var(--secondary-color); color: white; text-align: center; padding: 15px 0; font-size: 0.9rem; position: relative; z-index: 10;">
+        © <span id="copyright-year">2026</span> Department of Transportation | HRDD - All Rights Reserved
+    </div>
+
+    <script>
+        // Loading
+        window.addEventListener('load', () => { setTimeout(() => { const l = document.getElementById('loader'); l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 500); }, 1200); });
+        
+        // 404 Tests
+        function show404() { document.getElementById('not-found').style.display = 'flex'; }
+        function hide404() { document.getElementById('not-found').style.display = 'none'; }
+        
+        // Smooth scroll to contact footer
+        document.querySelectorAll('a[href="#contact-footer"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.getElementById('contact-footer');
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 0);
+                }
+            });
+        });
+        
+        // PDF Modal Logic
+        const m = document.getElementById("pdfModal");
+        const v = document.getElementById("viewer");
+        function openPdf(f) { v.src = f; m.style.display = "block"; document.body.style.overflow = "hidden"; }
+        function closePdf() { m.style.display = "none"; v.src = ""; document.body.style.overflow = "auto"; }
+        window.onclick = (e) => { if (e.target == m) closePdf(); }
+    </script>
+</body>
+</html>

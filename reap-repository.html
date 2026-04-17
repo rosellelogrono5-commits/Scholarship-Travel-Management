@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REAP Repository - DOTr HRDD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #fbd305;
+            --secondary-color: #005eb8;
+            --text-color: #333;
+            --bg-color: #f4f5f7;
+            --dotr-blue: #123e8f; 
+            --dotr-grey: #6d6d6d; 
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
+
+        /* Overlays */
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .overlay img { max-width: 300px; height: auto; }
+        #not-found { display: none; }
+        #not-found button { margin-top: 20px; padding: 10px 25px; background-color: var(--secondary-color); color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+
+        /* Navigation Bar */
+        header { background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 0 5% 0 2%; height: 85px; max-width: 1400px; margin: 0 auto; }
+        
+        .logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; text-decoration: none; }
+        .dotr-seal { width: 55px; height: auto; }
+        .logo-text { display: flex; flex-direction: column; justify-content: center; }
+        .logo-title { font-size: 26px; font-weight: 800; color: var(--dotr-blue); letter-spacing: 0.5px; line-height: 1.1; }
+        .logo-subtitle { font-size: 15px; color: var(--dotr-grey); font-weight: 500; line-height: 1.2; letter-spacing: 0.2px; }
+
+        .nav-links { list-style: none; display: flex; align-items: center; }
+        .nav-links li { position: relative; }
+        .nav-links a { text-decoration: none; color: var(--text-color); padding: 20px 15px; display: block; font-weight: 600; transition: 0.3s; }
+        .nav-links a:hover { color: var(--secondary-color); }
+        .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: white; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; z-index: 1; }
+        .dropdown:hover .dropdown-content { display: block; }
+        .dropdown-content a { padding: 12px 16px; font-weight: normal; border-bottom: 1px solid #eee; }
+        .dropdown-content a:hover { background-color: var(--bg-color); }
+
+        /* Modern Library Hero Section */
+        .library-hero {
+            position: relative;
+            height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(18, 62, 143, 0.7), rgba(0, 0, 0, 0.8)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.2);
+        }
+        .library-hero h1 { font-size: 3rem; margin-bottom: 15px; font-weight: 800; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .library-hero p { font-size: 1.2rem; margin-bottom: 30px; font-weight: 300; opacity: 0.9; max-width: 600px; }
+
+        /* Search Bar Setup */
+        .search-container {
+            position: relative;
+            width: 60%;
+            max-width: 700px;
+            animation: slideUp 1s ease-out;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 20px 25px 20px 55px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            outline: none;
+            transition: 0.3s;
+        }
+        .search-container input:focus { box-shadow: 0 10px 35px rgba(251, 211, 5, 0.4); transform: scale(1.02); }
+        .search-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dotr-grey);
+            font-size: 1.3rem;
+        }
+
+        /* Library Grid (The Shelf) */
+        .library-section { max-width: 1300px; margin: 60px auto; padding: 0 25px; }
+        .shelf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .shelf-header h2 { color: var(--dotr-blue); font-size: 1.8rem; }
+        .shelf-header span { color: var(--dotr-grey); font-weight: 600; }
+
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; perspective: 1000px; }
+        
+        /* Interactive Publication Card */
+        .pub-card {
+            background: white;
+            border-radius: 8px 12px 12px 8px;
+            overflow: hidden;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1), inset 6px 0 0 var(--secondary-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: fadeIn 0.8s ease-in-out forwards;
+            opacity: 0;
+            transform-style: preserve-3d;
+        }
+        
+        /* Animation delays for a cascading entrance effect */
+        .pub-card:nth-child(1) { animation-delay: 0.1s; }
+        .pub-card:nth-child(2) { animation-delay: 0.2s; }
+        .pub-card:nth-child(3) { animation-delay: 0.3s; }
+        .pub-card:nth-child(4) { animation-delay: 0.4s; }
+        .pub-card:nth-child(5) { animation-delay: 0.5s; }
+        .pub-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .pub-card:hover { 
+            transform: translateY(-15px) rotateY(-5deg) scale(1.03); 
+            box-shadow: 15px 20px 30px rgba(0,0,0,0.15), inset 8px 0 0 var(--primary-color); 
+            z-index: 10;
+        }
+
+        .pub-cover { height: 160px; background-color: #e0e0e0; position: relative; overflow: hidden; }
+        .pub-cover img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: 0.4s; }
+        .pub-card:hover .pub-cover img { opacity: 1; transform: scale(1.1); }
+        .pub-format { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; }
+
+        .pub-info { padding: 25px 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .pub-category { font-size: 0.8rem; color: var(--secondary-color); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+        .pub-title { font-size: 1.2rem; color: var(--dotr-blue); margin-bottom: 10px; font-weight: 700; line-height: 1.3; }
+        .pub-author { font-size: 0.9rem; color: var(--dotr-grey); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; }
+        
+        .pub-actions { display: flex; gap: 10px; margin-top: auto; }
+        .btn-view, .btn-download { flex: 1; padding: 10px; text-align: center; border-radius: 5px; font-weight: 600; cursor: pointer; transition: 0.3s; border: none; font-size: 0.9rem; }
+        .btn-view { background-color: #f0f4f8; color: var(--secondary-color); border: 1px solid #d9e2ec; }
+        .btn-view:hover { background-color: var(--secondary-color); color: white; }
+        .btn-download { background-color: var(--primary-color); color: var(--text-color); }
+        .btn-download:hover { background-color: #e6c100; }
+
+        /* No Results Message */
+        #no-results { text-align: center; padding: 50px; font-size: 1.2rem; color: var(--dotr-grey); display: none; width: 100%; grid-column: 1 / -1; }
+
+        /* Keyframes */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* PDF Modal */
+        .pdf-modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(10px); animation: fadeIn 0.3s; }
+        .modal-inner { background-color: white; margin: 2vh auto; padding: 15px; width: 85%; height: 94vh; border-radius: 12px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .close-modal { color: white; position: absolute; top: -15px; right: -40px; font-size: 40px; cursor: pointer; transition: 0.2s; }
+        .close-modal:hover { color: var(--primary-color); transform: scale(1.1); }
+        iframe { border: none; width: 100%; height: 100%; border-radius: 8px; }
+
+    </style>
+</head>
+<body>
+
+    <div id="loader" class="overlay"><img src="world.gif" alt="Loading..."></div>
+
+    <div id="not-found" class="overlay">
+        <img src="notfound.gif" alt="Page Not Found">
+        <h2>Page Under Maintenance</h2>
+        <button onclick="hide404()">Return to Dashboard</button>
+    </div>
+
+    <header>
+        <nav>
+            <a href="index.html" class="logo-container">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSShgloc46FB769Q4a6twpBmAN3FGj-ASgHba0nc-CXqg&s&ec=121630468" alt="DOTr Logo" class="dotr-seal">
+                <div class="logo-text">
+                    <span class="logo-title">DOTr - HRDD</span>
+                    <span class="logo-subtitle">Scholarship & Travel Management</span>
+                </div>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#" onclick="show404()">About Us</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn">Travel ▾</a>
+                    <div class="dropdown-content">
+                        <a href="#">Travel Options</a>
+                        <a href="#">Process Flows</a>
+                        <a href="#">Submission Timeline</a>
+                    </div>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropbtn" style="color: var(--secondary-color);">Scholarship ▾</a>
+                    <div class="dropdown-content">
+                        <a href="reap-repository.html">REAP Repository</a>
+                    </div>
+                </li>
+                <li><a href="issuances.html" style="color: var(--text-color);">Issuances</a></li>
+                <li><a href="#contact-footer">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="library-hero">
+            <h1>REAP Repository Library</h1>
+            <p>Access our comprehensive collection of re-entry action plans, global institutional research, and scholarly publications.</p>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" onkeyup="filterLibrary()" placeholder="Search by publication title, topic, or keyword...">
+            </div>
+        </section>
+
+        <section class="library-section">
+            <div class="shelf-header">
+                <h2>Available Publications</h2>
+                <span><i class="fa-solid fa-book"></i> Digital Archives</span>
+            </div>
+
+            <div class="book-grid" id="bookGrid">
+                
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800&auto=format&fit=crop" alt="Cover">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Urban Mobility</span>
+                        <h3 class="pub-title">Sustainable Transit Frameworks in Metro Manila</h3>
+                        <div class="pub-author"><i class="fa-solid fa-user-pen"></i> Juan Dela Cruz, 2024</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('sample1.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop" alt="Cover">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Aviation Research</span>
+                        <h3 class="pub-title">Green Aviation: Strategies for Airport Eco-Efficiency</h3>
+                        <div class="pub-author"><i class="fa-solid fa-user-pen"></i> Maria Clara Santos, 2025</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('sample2.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="https://images.unsplash.com/photo-1541888046-24b89ebfb56c?q=80&w=800&auto=format&fit=crop" alt="Cover">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Maritime Policy</span>
+                        <h3 class="pub-title">Port Congestion Analysis and Smart Logistics Integration</h3>
+                        <div class="pub-author"><i class="fa-solid fa-user-pen"></i> Carlos Reyes, 2023</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('sample3.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="https://images.unsplash.com/photo-1517524008697-84bbe3c3fd98?q=80&w=800&auto=format&fit=crop" alt="Cover">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Railway Engineering</span>
+                        <h3 class="pub-title">High-Speed Rail Feasibility Study in Northern Luzon</h3>
+                        <div class="pub-author"><i class="fa-solid fa-user-pen"></i> Engr. Mark Bautista, 2025</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('sample4.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=800&auto=format&fit=crop" alt="Cover">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">HR & Leadership</span>
+                        <h3 class="pub-title">Transformational Leadership in Public Transport Sector</h3>
+                        <div class="pub-author"><i class="fa-solid fa-user-pen"></i> Ana Patricia Lopez, 2024</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('sample5.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?q=80&w=800&auto=format&fit=crop" alt="Cover">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Active Transport</span>
+                        <h3 class="pub-title">Impact of Protected Bike Lanes on Commuter Safety</h3>
+                        <div class="pub-author"><i class="fa-solid fa-user-pen"></i> Miguel Torres, 2026</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('sample6.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="no-results">
+                    <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; color: #ccc;"></i><br>
+                    No publications found matching your search.
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <div id="pdfModal" class="pdf-modal">
+        <div class="modal-inner">
+            <span class="close-modal" onclick="closePdf()">&times;</span>
+            <iframe id="viewer" src=""></iframe>
+        </div>
+    </div>
+
+    <footer id="contact-footer" style="position: relative; width: 100%; height: 400px; z-index: 10; overflow: hidden; background-color: #f4f4f4;">
+        <iframe id="google-map" src="https://maps.google.com/maps?q=Department+of+Transportation,+The+Columbia+Tower,+Ortigas+Avenue,+Mandaluyong+City&t=&z=16&ie=UTF8&iwloc=&output=embed" style="position: relative; z-index: 5; width: 100%; height: 100%; border: 0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div style="position: absolute; right: 5%; top: 50%; transform: translateY(-50%); z-index: 10; background-color: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 380px; color: #333;">
+            <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.2rem; font-weight: 700;">Department of Transportation</h3>
+            <p style="margin-bottom: 12px; font-size: 0.95rem; line-height: 1.5;"><i class="fa-solid fa-location-dot" style="color: var(--secondary-color); margin-right: 8px; width: 15px;"></i>The Columbia Tower, Ortigas Avenue, Barangay Wack-Wack, Mandaluyong City, NCR</p>
+            <p style="margin-bottom: 12px; font-size: 0.95rem;"><i class="fa-solid fa-phone" style="color: var(--secondary-color); margin-right: 8px; width: 15px;"></i>local 4401/4402</p>
+            <p style="margin-bottom: 0; font-size: 0.95rem;"><i class="fa-solid fa-envelope" style="color: var(--secondary-color); margin-right: 8px; width: 15px;"></i><a href="mailto:hrdd.ldu@dotr.gov.ph" style="color: #333; text-decoration: none;">hrdd.ldu@dotr.gov.ph</a></p>
+        </div>
+    </footer>
+    <div style="background-color: var(--secondary-color); color: white; text-align: center; padding: 15px 0; font-size: 0.9rem; position: relative; z-index: 10;">
+        © <span id="copyright-year">2026</span> Department of Transportation | HRDD - All Rights Reserved
+    </div>
+
+    <script>
+        // Fake Loading Screen to match other pages
+        window.addEventListener('load', () => { 
+            setTimeout(() => { 
+                const l = document.getElementById('loader'); 
+                l.style.opacity = '0'; 
+                setTimeout(() => l.style.display = 'none', 500); 
+            }, 1000); 
+        });
+        
+        // 404 Overlay Function
+        function show404() { document.getElementById('not-found').style.display = 'flex'; }
+        function hide404() { document.getElementById('not-found').style.display = 'none'; }
+        
+        // Smooth scroll to contact footer
+        document.querySelectorAll('a[href="#contact-footer"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.getElementById('contact-footer');
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 0);
+                }
+            });
+        });
+        
+        // Search & Filter Logic
+        function filterLibrary() {
+            let input = document.getElementById('searchInput').value.toUpperCase();
+            let grid = document.getElementById('bookGrid');
+            let cards = grid.getElementsByClassName('pub-card');
+            let noResultsMsg = document.getElementById('no-results');
+            let visibleCount = 0;
+
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].querySelector('.pub-title');
+                let category = cards[i].querySelector('.pub-category');
+                
+                if (title || category) {
+                    let textValue = (title.textContent || title.innerText) + " " + (category.textContent || category.innerText);
+                    if (textValue.toUpperCase().indexOf(input) > -1) {
+                        cards[i].style.display = "flex";
+                        visibleCount++;
+                    } else {
+                        cards[i].style.display = "none";
+                    }
+                }
+            }
+
+            // Show 'No Results' message if everything is filtered out
+            if (visibleCount === 0) {
+                noResultsMsg.style.display = "block";
+            } else {
+                noResultsMsg.style.display = "none";
+            }
+        }
+
+        // PDF Modal Controls
+        const m = document.getElementById("pdfModal");
+        const v = document.getElementById("viewer");
+        function openPdf(fileUrl) { 
+            v.src = fileUrl; 
+            m.style.display = "block"; 
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
+        }
+        function closePdf() { 
+            m.style.display = "none"; 
+            v.src = ""; 
+            document.body.style.overflow = "auto"; 
+        }
+        
+        // Close modal when clicking outside of the inner modal box
+        window.onclick = (e) => { 
+            if (e.target == m) closePdf(); 
+        }
+    </script>
+</body>
+</html>
