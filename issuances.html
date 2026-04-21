@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Issuances - DOTr HRDD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #fbd305;
@@ -14,7 +15,7 @@
             --dotr-blue: #123e8f; 
             --dotr-grey: #6d6d6d; 
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
         body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
 
         /* Overlays */
@@ -42,28 +43,117 @@
         .dropdown-content a { padding: 12px 16px; font-weight: normal; border-bottom: 1px solid #eee; }
         .dropdown-content a:hover { background-color: var(--bg-color); }
 
-        /* Header for Pages */
-        .page-header { background: var(--dotr-blue); color: white; padding: 60px 20px; text-align: center; }
-        .page-header h1 { font-size: 2.8rem; margin-bottom: 10px; }
+        /* Modern Library Hero Section */
+        .library-hero {
+            position: relative;
+            height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            background: linear-gradient(to bottom, rgba(18, 62, 143, 0.7), rgba(0, 0, 0, 0.8)), url('https://law.washu.edu/wp-content/uploads/2025/08/WashU-Law-Library-01-small.webp') center/cover no-repeat;
+            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.2);
+        }
+        .library-hero h1 { font-size: 3rem; margin-bottom: 15px; font-weight: 800; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
+        .library-hero p { font-size: 1.2rem; margin-bottom: 30px; font-weight: 300; opacity: 0.9; max-width: 600px; }
 
-        /* Content Blocks */
-        section.content-block { max-width: 1250px; margin: 60px auto; padding: 0 25px; }
+        /* Search Bar Setup */
+        .search-container {
+            position: relative;
+            width: 60%;
+            max-width: 700px;
+            animation: slideUp 1s ease-out;
+        }
+        .search-container input {
+            width: 100%;
+            padding: 20px 25px 20px 55px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            outline: none;
+            transition: 0.3s;
+        }
+        .search-container input:focus { box-shadow: 0 10px 35px rgba(251, 211, 5, 0.4); transform: scale(1.02); }
+        .search-container i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dotr-grey);
+            font-size: 1.3rem;
+        }
 
-        /* Grid */
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .custom-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: 0.3s; display: flex; flex-direction: column; }
-        .custom-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
-        .custom-card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-body { padding: 22px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-body h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--dotr-blue); }
-        .card-body p { font-size: 0.95rem; color: #666; margin-bottom: 20px; line-height: 1.5; }
-        .action-btn { padding: 12px; background-color: var(--secondary-color); color: white; text-align: center; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .action-btn:hover { background-color: #00448a; }
+        /* Library Grid */
+        .library-section { max-width: 1300px; margin: 60px auto; padding: 0 25px; }
+        .shelf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+        .shelf-header h2 { color: var(--dotr-blue); font-size: 1.8rem; }
+        .shelf-header span { color: var(--dotr-grey); font-weight: 600; }
+
+        .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 40px; perspective: 1000px; }
+        
+        /* Interactive Publication Card */
+        .pub-card {
+            background: white;
+            border-radius: 8px 12px 12px 8px;
+            overflow: hidden;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1), inset 6px 0 0 var(--secondary-color);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            animation: fadeIn 0.8s ease-in-out forwards;
+            opacity: 0;
+            transform-style: preserve-3d;
+        }
+        
+        /* Animation delays for a cascading entrance effect */
+        .pub-card:nth-child(1) { animation-delay: 0.1s; }
+        .pub-card:nth-child(2) { animation-delay: 0.2s; }
+        .pub-card:nth-child(3) { animation-delay: 0.3s; }
+        .pub-card:nth-child(4) { animation-delay: 0.4s; }
+        .pub-card:nth-child(5) { animation-delay: 0.5s; }
+        .pub-card:nth-child(6) { animation-delay: 0.6s; }
+        .pub-card:nth-child(7) { animation-delay: 0.7s; }
+        .pub-card:nth-child(8) { animation-delay: 0.8s; }
+
+        .pub-card:hover { 
+            transform: translateY(-15px) rotateY(-5deg) scale(1.03); 
+            box-shadow: 15px 20px 30px rgba(0,0,0,0.15), inset 8px 0 0 var(--primary-color); 
+            z-index: 10;
+        }
+
+        .pub-cover { height: 200px; background-color: #e0e0e0; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .pub-cover img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: 0.4s; }
+        .pub-card:hover .pub-cover img { opacity: 1; transform: scale(1.1); }
+        .pub-format { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.7); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; }
+
+        .pub-info { padding: 25px 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .pub-category { font-size: 0.8rem; color: var(--secondary-color); text-transform: uppercase; font-weight: 700; margin-bottom: 8px; }
+        .pub-title { font-size: 1.2rem; color: var(--dotr-blue); margin-bottom: 10px; font-weight: 700; line-height: 1.3; }
+        .pub-author { font-size: 0.9rem; color: var(--dotr-grey); margin-bottom: 20px; display: flex; align-items: center; gap: 6px; }
+        
+        .pub-actions { display: flex; gap: 10px; margin-top: auto; }
+        .btn-view, .btn-download { flex: 1; padding: 10px; text-align: center; border-radius: 5px; font-weight: 600; cursor: pointer; transition: 0.3s; border: none; font-size: 0.9rem; }
+        .btn-view { background-color: #f0f4f8; color: var(--secondary-color); border: 1px solid #d9e2ec; }
+        .btn-view:hover { background-color: var(--secondary-color); color: white; }
+        .btn-download { background-color: var(--primary-color); color: var(--text-color); }
+        .btn-download:hover { background-color: #e6c100; }
+
+        /* No Results Message */
+        #no-results { text-align: center; padding: 50px; font-size: 1.2rem; color: var(--dotr-grey); display: none; width: 100%; grid-column: 1 / -1; }
+
+        /* Keyframes */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
         /* PDF Modal */
-        .pdf-modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); backdrop-filter: blur(8px); }
-        .modal-inner { background-color: white; margin: 2vh auto; padding: 15px; width: 85%; height: 94vh; border-radius: 12px; position: relative; }
-        .close-modal { color: white; position: absolute; top: -10px; right: -40px; font-size: 40px; cursor: pointer; }
+        .pdf-modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(10px); animation: fadeIn 0.3s; }
+        .modal-inner { background-color: white; margin: 2vh auto; padding: 15px; width: 85%; height: 94vh; border-radius: 12px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .close-modal { color: white; position: absolute; top: -15px; right: -40px; font-size: 40px; cursor: pointer; transition: 0.2s; }
+        .close-modal:hover { color: var(--primary-color); transform: scale(1.1); }
         iframe { border: none; width: 100%; height: 100%; border-radius: 8px; }
     </style>
 </head>
@@ -110,29 +200,164 @@
         </nav>
     </header>
 
-    <div class="page-header">
-        <h1>Official Issuances</h1>
-        <p>Browse and download guidelines, memorandums, and necessary forms.</p>
-    </div>
-
     <main>
-        <section class="content-block">
-            <div class="grid-layout">
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=800&auto=format&fit=crop" alt="Doc 1"><div class="card-body"><h3>Memorandum Circular No. 50</h3><button class="action-btn" onclick="openPdf('file1.pdf')">View PDF</button></div></div>
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1568667256549-094345857637?q=80&w=800&auto=format&fit=crop" alt="Doc 2"><div class="card-body"><h3>Department Order No. 2025-011</h3><button class="action-btn" onclick="openPdf('file2.pdf')">View PDF</button></div></div>
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop" alt="Doc 3"><div class="card-body"><h3>Approving Authority</h3><button class="action-btn" onclick="openPdf('file3.pdf')">View PDF</button></div></div>
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800&auto=format&fit=crop" alt="Doc 4"><div class="card-body"><h3>Executive Order No. 77</h3><button class="action-btn" onclick="openPdf('file4.pdf')">View PDF</button></div></div>
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=800&auto=format&fit=crop" alt="Doc 5"><div class="card-body"><h3>Department Order No. 2023-011</h3><button class="action-btn" onclick="openPdf('file5.pdf')">View PDF</button></div></div>
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1606326666490-45757474e788?q=80&w=800&auto=format&fit=crop" alt="Doc 6"><div class="card-body"><h3>Department Order No. 2023-007</h3><button class="action-btn" onclick="openPdf('file6.pdf')">View PDF</button></div></div>
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=800&auto=format&fit=crop" alt="Doc 7"><div class="card-body"><h3>Department Order No. 2022-024</h3><button class="action-btn" onclick="openPdf('file7.pdf')">View PDF</button></div></div>
-                <div class="custom-card"><img src="https://images.unsplash.com/photo-1544377193-33dcf4d68fb5?q=80&w=800&auto=format&fit=crop" alt="Doc 8"><div class="card-body"><h3>Department Order No. 2021-007</h3><button class="action-btn" onclick="openPdf('file8.pdf')">View PDF</button></div></div>
+        <section class="library-hero">
+            <h1>Official Issuances</h1>
+            <p>Browse and download guidelines, memorandums, and necessary forms.</p>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" onkeyup="filterIssuances()" placeholder="Search by title, order number, or keyword...">
+            </div>
+        </section>
+
+        <section class="library-section">
+            <div class="shelf-header">
+                <h2>Official Documents</h2>
+                <span><i class="fa-solid fa-file-contract"></i> Document Archives</span>
+            </div>
+
+            <div class="book-grid" id="issuanceGrid">
+                
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="50.png" alt="Doc 1">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Memorandum Circular</span>
+                        <h3 class="pub-title">Memorandum Circular No. 50</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> HRDD Division</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file1.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="2025011.png" alt="Doc 2">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Department Order</span>
+                        <h3 class="pub-title">Department Order No. 2025-011</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> HRDD Division</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file2.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="authority.png" alt="Doc 3">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Guidelines</span>
+                        <h3 class="pub-title">Approving Authority Matrix</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> HRDD Division</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file3.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="77.png" alt="Doc 4">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Executive Order</span>
+                        <h3 class="pub-title">Executive Order No. 77</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> Office of the President</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file4.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="2023011.png" alt="Doc 5">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Department Order</span>
+                        <h3 class="pub-title">Department Order No. 2023-011</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> HRDD Division</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file5.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="2023007.png" alt="Doc 6">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Department Order</span>
+                        <h3 class="pub-title">Department Order No. 2023-007</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> HRDD Division</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file6.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="2022024.png" alt="Doc 7">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Department Order</span>
+                        <h3 class="pub-title">Department Order No. 2022-024</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> HRDD Division</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file7.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pub-card">
+                    <div class="pub-cover">
+                        <div class="pub-format">PDF</div>
+                        <img src="2021007.png" alt="Doc 8">
+                    </div>
+                    <div class="pub-info">
+                        <span class="pub-category">Department Order</span>
+                        <h3 class="pub-title">Department Order No. 2021-007</h3>
+                        <div class="pub-author"><i class="fa-solid fa-building"></i> HRDD Division</div>
+                        <div class="pub-actions">
+                            <button class="btn-view" onclick="openPdf('file8.pdf')"><i class="fa-regular fa-eye"></i> View</button>
+                            <button class="btn-download"><i class="fa-solid fa-download"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="no-results">
+                    <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 15px; color: #ccc;"></i><br>
+                    No issuances found matching your search.
+                </div>
+
             </div>
         </section>
     </main>
 
     <div id="pdfModal" class="pdf-modal">
         <div class="modal-inner">
-            <span class="close-modal" onclick="closePdf()">&times;</span>
+            <span class="close-modal" onclick="closePdf()">×</span>
             <iframe id="viewer" src=""></iframe>
         </div>
     </div>
@@ -152,9 +377,15 @@
 
     <script>
         // Loading
-        window.addEventListener('load', () => { setTimeout(() => { const l = document.getElementById('loader'); l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 500); }, 1200); });
+        window.addEventListener('load', () => { 
+            setTimeout(() => { 
+                const l = document.getElementById('loader'); 
+                l.style.opacity = '0'; 
+                setTimeout(() => l.style.display = 'none', 500); 
+            }, 1000); 
+        });
         
-        // 404 Tests
+        // 404 Overlay Function
         function show404() { document.getElementById('not-found').style.display = 'flex'; }
         function hide404() { document.getElementById('not-found').style.display = 'none'; }
         
@@ -171,12 +402,55 @@
             });
         });
         
-        // PDF Modal Logic
+        // Search & Filter Logic
+        function filterIssuances() {
+            let input = document.getElementById('searchInput').value.toUpperCase();
+            let grid = document.getElementById('issuanceGrid');
+            let cards = grid.getElementsByClassName('pub-card');
+            let noResultsMsg = document.getElementById('no-results');
+            let visibleCount = 0;
+
+            for (let i = 0; i < cards.length; i++) {
+                let title = cards[i].querySelector('.pub-title');
+                let category = cards[i].querySelector('.pub-category');
+                
+                if (title || category) {
+                    let textValue = (title.textContent || title.innerText) + " " + (category.textContent || category.innerText);
+                    if (textValue.toUpperCase().indexOf(input) > -1) {
+                        cards[i].style.display = "flex";
+                        visibleCount++;
+                    } else {
+                        cards[i].style.display = "none";
+                    }
+                }
+            }
+
+            // Show 'No Results' message if everything is filtered out
+            if (visibleCount === 0) {
+                noResultsMsg.style.display = "block";
+            } else {
+                noResultsMsg.style.display = "none";
+            }
+        }
+
+        // PDF Modal Controls
         const m = document.getElementById("pdfModal");
         const v = document.getElementById("viewer");
-        function openPdf(f) { v.src = f; m.style.display = "block"; document.body.style.overflow = "hidden"; }
-        function closePdf() { m.style.display = "none"; v.src = ""; document.body.style.overflow = "auto"; }
-        window.onclick = (e) => { if (e.target == m) closePdf(); }
+        function openPdf(fileUrl) { 
+            v.src = fileUrl; 
+            m.style.display = "block"; 
+            document.body.style.overflow = "hidden"; // Prevent background scrolling
+        }
+        function closePdf() { 
+            m.style.display = "none"; 
+            v.src = ""; 
+            document.body.style.overflow = "auto"; 
+        }
+        
+        // Close modal when clicking outside of the inner modal box
+        window.onclick = (e) => { 
+            if (e.target == m) closePdf(); 
+        }
     </script>
 </body>
 </html>
