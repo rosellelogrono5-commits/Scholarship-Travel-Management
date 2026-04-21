@@ -5,16 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DOTr - HRDD | Scholarship & Travel Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary-color: #fbd305;
-            --secondary-color: #005eb8;
+            --secondary-color: #01013a;
             --text-color: #333;
             --bg-color: #f4f5f7;
-            --dotr-blue: #123e8f; 
+            --dotr-blue: #0b1f47; 
             --dotr-grey: #6d6d6d; 
+            --accent-light: #9dbfe6;
+            --accent-mid: #4a80c9;
+            --accent-red: #800000;
+            
+            /* New BSP-inspired variables */
+            --bsp-dark: #081c42;
+            --bsp-yellow: #f5c721;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; scroll-behavior: smooth; }
         body { background-color: var(--bg-color); color: var(--text-color); overflow-x: hidden; }
 
         /* Overlays */
@@ -30,24 +39,95 @@
             border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: 0.3s;
         }
 
-        /* Navigation Bar */
-        header { background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        /* --- Refined Modern Navigation Bar --- */
+        header { 
+            background: linear-gradient(90deg, #021946 0%, var(--dotr-blue) 100%); 
+            box-shadow: 0 4px 25px rgba(0,0,0,0.4); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 2px solid rgb(242, 224, 135); 
+        }
         nav { display: flex; justify-content: space-between; align-items: center; padding: 0 5% 0 2%; height: 85px; max-width: 1400px; margin: 0 auto; }
         
-        .logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; text-decoration: none; }
-        .dotr-seal { width: 55px; height: auto; }
+        .logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; text-decoration: none; transition: transform 0.3s ease; }
+        .logo-container:hover { transform: scale(1.02); }
+        .dotr-seal { width: 55px; height: auto; filter: drop-shadow(0 0 8px rgba(255,255,255,0.2)); }
         .logo-text { display: flex; flex-direction: column; justify-content: center; }
-        .logo-title { font-size: 26px; font-weight: 800; color: var(--dotr-blue); letter-spacing: 0.5px; line-height: 1.1; }
-        .logo-subtitle { font-size: 15px; color: var(--dotr-grey); font-weight: 500; line-height: 1.2; letter-spacing: 0.2px; }
+        .logo-title { font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; line-height: 1.1; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .logo-subtitle { font-size: 14px; color: var(--accent-light); font-weight: 600; line-height: 1.2; letter-spacing: 1px; text-transform: uppercase; }
 
-        .nav-links { list-style: none; display: flex; align-items: center; }
+        .nav-links { list-style: none; display: flex; align-items: center; gap: 8px; }
         .nav-links li { position: relative; }
-        .nav-links a { text-decoration: none; color: var(--text-color); padding: 20px 15px; display: block; font-weight: 600; transition: 0.3s; }
-        .nav-links a:hover { color: var(--secondary-color); }
-        .dropdown-content { display: none; position: absolute; top: 100%; left: 0; background-color: white; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-radius: 4px; overflow: hidden; z-index: 1; }
-        .dropdown:hover .dropdown-content { display: block; }
-        .dropdown-content a { padding: 12px 16px; font-weight: normal; border-bottom: 1px solid #eee; }
-        .dropdown-content a:hover { background-color: var(--bg-color); }
+        .nav-links a { 
+            text-decoration: none; 
+            color: #d1dcf0; 
+            padding: 10px 18px; 
+            display: block; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+        }
+        .nav-links a:hover { 
+            color: var(--bsp-yellow); 
+            background: rgba(255, 255, 255, 0.08);
+            text-shadow: 0 0 10px rgba(245, 199, 33, 0.3);
+        }
+        
+        /* Animated underline for nav */
+        .nav-links > li > a::after {
+            content: '';
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: var(--bsp-yellow);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--bsp-yellow);
+        }
+        .nav-links > li > a:hover::after { width: 60%; }
+
+        .dropdown-content { 
+            display: none; 
+            position: absolute; 
+            top: 100%; 
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff; 
+            min-width: 220px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+            border-radius: 10px; 
+            overflow: hidden; 
+            z-index: 1; 
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        .dropdown:hover .dropdown-content { 
+            display: block; 
+            animation: fadeInDropdown 0.3s ease forwards;
+        }
+        @keyframes fadeInDropdown {
+            from { opacity: 0; transform: translate(-50%, 10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .dropdown-content a { 
+            padding: 15px 22px; 
+            font-weight: 600; 
+            color: var(--dotr-blue);
+            border-bottom: 1px solid #f0f4f8; 
+            transition: all 0.2s ease;
+        }
+        .dropdown-content a::after { display: none; } /* hide underline on dropdown items */
+        .dropdown-content a:hover { 
+            background-color: #f8faff; 
+            color: var(--secondary-color);
+            padding-left: 28px;
+            background-image: linear-gradient(90deg, var(--bsp-yellow) 0%, transparent 5px);
+        }
 
         /* Hero Carousel */
         .hero { position: relative; height: 65vh; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; text-align: center; overflow: hidden; }
@@ -60,21 +140,386 @@
         .hero-content p { font-size: 1.4rem; text-shadow: 1px 1px 4px rgba(0,0,0,0.8); }
 
         /* Content Blocks */
-        .booking-widget { background: white; padding: 35px; border-radius: 12px; width: 85%; max-width: 1000px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); margin: -60px auto 0; position: relative; z-index: 10; }
-        section.content-block { max-width: 1250px; margin: 80px auto; padding: 0 25px; }
-        .section-title { text-align: center; color: var(--dotr-blue); font-size: 2.2rem; margin-bottom: 45px; position: relative; }
-        .section-title::after { content: ''; display: block; width: 60px; height: 4px; background: var(--primary-color); margin: 15px auto 0; }
+        .booking-widget { 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%); 
+            padding: 45px; 
+            border-radius: 16px; 
+            width: 90%; 
+            max-width: 1100px; 
+            box-shadow: 0 20px 50px rgba(8, 28, 66, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8); 
+            margin: -60px auto 50px; 
+            position: relative; 
+            z-index: 10; 
+            border: 1px solid rgba(245, 199, 33, 0.2);
+            animation: slideUpWidget 0.8s ease-out;
+        }
 
-        /* Grid */
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-        .custom-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: 0.3s; display: flex; flex-direction: column; }
-        .custom-card:hover { transform: translateY(-8px); box-shadow: 0 12px 25px rgba(0,0,0,0.15); }
-        .custom-card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-body { padding: 22px; flex-grow: 1; display: flex; flex-direction: column; }
-        .card-body h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--dotr-blue); }
-        .card-body p { font-size: 0.95rem; color: #666; margin-bottom: 20px; line-height: 1.5; }
-        .action-btn { padding: 12px; background-color: var(--secondary-color); color: white; text-align: center; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none; }
-        .action-btn:hover { background-color: #00448a; }
+        @keyframes slideUpWidget { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* NEW DATE SETTLER STYLES */
+        .widget-header { text-align: center; margin-bottom: 30px; }
+        .widget-header h2 { 
+            color: var(--dotr-blue); 
+            font-weight: 800; 
+            margin-bottom: 8px; 
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--dotr-blue) 0%, var(--accent-mid) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .widget-header p { color: #666; font-size: 0.95rem; }
+
+        .date-settler-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #f0f5ff 0%, #f8faff 100%);
+            padding: 30px;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 94, 184, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .date-settler-form:focus-within {
+            border-color: rgba(0, 94, 184, 0.3);
+            box-shadow: 0 0 0 4px rgba(0, 94, 184, 0.05);
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--dotr-blue);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .form-group label i {
+            color: var(--bsp-yellow);
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            padding: 14px 15px;
+            border: 2px solid #e1e8f5;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            outline: none;
+            transition: all 0.3s ease;
+            background: white;
+            font-weight: 500;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 4px rgba(0, 94, 184, 0.15);
+            background: #fafbff;
+            transform: translateY(-2px);
+        }
+        
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .btn-group {
+            flex: 0 0 auto;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 900px) {
+            .btn-group {
+                width: auto;
+                margin-top: 0;
+            }
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--bsp-yellow) 0%, #f5c000 100%);
+            color: var(--dotr-blue);
+            border: none;
+            padding: 14px 30px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            height: 50px;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(245, 199, 33, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.4s ease;
+        }
+        
+        .search-btn:hover::before {
+            left: 100%;
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, #f5c000 0%, #e0b616 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(245, 199, 33, 0.4);
+        }
+        
+        .search-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* NEW DARK DASHBOARD SECTION */
+        .dark-dashboard {
+            background-color: var(--bsp-dark);
+            /* Custom Electrical Wiring + Transport SVG Pattern */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3C!-- Circuits --%3E%3Cg fill='none' stroke='%231c3c75' stroke-width='1.5' opacity='0.7'%3E%3Cpath d='M0 50h80l30 30h100v-40h90' /%3E%3Cpath d='M300 200h-60l-30-30h-80v50h-130' /%3E%3Cpath d='M150 0v80l-20 20v100l30 30v70' /%3E%3Cpath d='M220 300v-50l20-20v-60l-40-40v-130' /%3E%3C/g%3E%3C!-- Circuit Nodes --%3E%3Cg fill='%232b5ba3' opacity='0.8'%3E%3Ccircle cx='80' cy='50' r='3'/%3E%3Ccircle cx='110' cy='80' r='4'/%3E%3Ccircle cx='210' cy='80' r='3'/%3E%3Ccircle cx='210' cy='40' r='4'/%3E%3Ccircle cx='240' cy='200' r='3'/%3E%3Ccircle cx='210' cy='170' r='4'/%3E%3Ccircle cx='130' cy='170' r='3'/%3E%3Ccircle cx='130' cy='220' r='4'/%3E%3Ccircle cx='150' cy='80' r='3'/%3E%3Ccircle cx='130' cy='100' r='4'/%3E%3Ccircle cx='180' cy='130' r='3'/%3E%3C/g%3E%3C!-- Subtle Transportation Icons --%3E%3Cg fill='%23214582' opacity='0.6'%3E%3C!-- Airplane --%3E%3Cpath d='M250 40 l15-5 l5 10 l-10 2 l-2 8 l-4-1 l-2-7 z' /%3E%3C!-- Train --%3E%3Cpath d='M100 210 h25 v15 h-25 z M103 213 h6 v6 h-6 z M113 213 h6 v6 h-6 z M105 225 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0 M115 225 a2 2 0 1 0 4 0 a2 2 0 1 0 -4 0' /%3E%3C!-- Car --%3E%3Cpath d='M30 60 h15 l5 5 h10 v8 h-30 z M35 73 a2.5 2.5 0 1 0 5 0 a2.5 2.5 0 1 0 -5 0 M48 73 a2.5 2.5 0 1 0 5 0 a2.5 2.5 0 1 0 -5 0' /%3E%3C!-- Ship --%3E%3Cpath d='M180 250 l-5 10 h20 l-5-10 h-10 M182 245 h6 v5 h-6 z' /%3E%3C/g%3E%3C/svg%3E");
+            padding: 80px 5%;
+            margin-bottom: 0;
+            box-shadow: inset 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .dark-dashboard-inner { max-width: 1350px; margin: 0 auto; }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .dashboard-header h2 {
+            color: var(--bsp-yellow);
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .dashboard-header .chevron {
+            color: var(--bsp-yellow);
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+
+        /* --- NEW VIDEO SHOWCASE STYLES (Robotics / Tech Design) --- */
+        .video-showcase {
+            position: relative;
+            background: rgba(4, 14, 33, 0.6);
+            border: 1px solid rgba(74, 128, 201, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 50px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4), inset 0 0 20px rgba(74, 128, 201, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Futuristic corner targeting brackets */
+        .video-showcase::before, .video-showcase::after {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border: 2px solid var(--bsp-yellow);
+            pointer-events: none;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        .video-showcase::before {
+            top: 15px; left: 15px;
+            border-right: none; border-bottom: none;
+        }
+        .video-showcase::after {
+            bottom: 15px; right: 15px;
+            border-left: none; border-top: none;
+        }
+        .video-showcase:hover::before, .video-showcase:hover::after {
+            width: 60px; height: 60px;
+            box-shadow: 0 0 15px rgba(245, 199, 33, 0.4);
+        }
+
+        .video-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(74, 128, 201, 0.2);
+        }
+
+        .video-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .video-title h3 {
+            color: var(--accent-light);
+            font-family: monospace, 'Courier New', Courier;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ff4757;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: rgba(255, 71, 87, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .dot {
+            width: 8px; height: 8px;
+            background-color: #ff4757;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink { 0% { opacity: 1; box-shadow: 0 0 8px #ff4757; } 50% { opacity: 0.3; box-shadow: none; } 100% { opacity: 1; box-shadow: 0 0 8px #ff4757; } }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 6px;
+            overflow: hidden;
+            background: #000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            border: 1px solid #1a2a47;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        /* --- END VIDEO SHOWCASE STYLES --- */
+
+        /* Dashboard Grid */
+        .grid-layout { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
+            gap: 30px; 
+            margin-bottom: 30px;
+        }
+        
+        /* White rounded cards */
+        .bsp-card { 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%); 
+            border-radius: 16px; 
+            padding: 30px; 
+            box-shadow: 0 12px 40px rgba(8, 28, 66, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.5); 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 380px; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUpCard 0.6s ease-out both;
+            border: 1px solid rgba(0, 94, 184, 0.08);
+        }
+        
+        .bsp-card:nth-child(1) { animation-delay: 0.1s; }
+        .bsp-card:nth-child(2) { animation-delay: 0.2s; }
+        .bsp-card:nth-child(3) { animation-delay: 0.3s; }
+        .bsp-card:nth-child(4) { animation-delay: 0.4s; }
+        .bsp-card:nth-child(5) { animation-delay: 0.5s; }
+        
+        @keyframes fadeInUpCard {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .bsp-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(8, 28, 66, 0.2), 0 0 0 1px rgba(245, 199, 33, 0.2);
+            border-color: rgba(0, 94, 184, 0.15);
+        }
+
+        .card-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .chart-title { 
+            font-size: 1.3rem; 
+            color: var(--bsp-dark); 
+            font-weight: 700; 
+        }
+
+        .card-chevron {
+            color: var(--bsp-yellow);
+            font-size: 1.4rem;
+            font-weight: 900;
+            transition: all 0.3s ease;
+        }
+        
+        .bsp-card:hover .card-chevron {
+            transform: translateX(5px);
+            color: #f5c000;
+        }
+        
+        .chart-container { 
+            position: relative; 
+            height: 260px; 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-grow: 1;
+            animation: chartFadeIn 0.8s ease-out;
+        }
+        
+        .chart-container.wide { height: 320px; }
+        
+        @keyframes chartFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 <body>
@@ -84,7 +529,7 @@
     <div id="not-found" class="overlay">
         <img src="notfound.gif" alt="Page Not Found">
         <h2>Page Under Maintenance</h2>
-        <button onclick="hide404()">Return to Dashboard</button>
+        <button onclick="hide404()">Return to Homepage</button>
     </div>
 
     <header>
@@ -98,7 +543,7 @@
             </a>
 
             <ul class="nav-links">
-                <li><a href="index.html" style="color: var(--secondary-color);">Home</a></li>
+                <li><a href="index.html" style="color: var(--bsp-yellow);">Home</a></li>
                 <li><a href="#" onclick="show404()">About Us</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropbtn">Travel ▾</a>
@@ -131,12 +576,122 @@
         </section>
 
         <section class="booking-widget">
-            <h2 style="color: var(--dotr-blue);">Human Resource Development Portal</h2>
-            <p style="margin-top: 15px; color: #555;">Welcome to the centralized management system for official foreign travel and scholarship programs. Access guidelines, download issuances, and explore our partner global institutions below.</p>
+            <div class="widget-header">
+                <h2>Human Resource Development Portal</h2>
+                <p>Select your dates to explore partner global institutions or initiate a travel request.</p>
+            </div>
+
+            <form class="date-settler-form" id="portalForm" onsubmit="event.preventDefault(); alert('Processing request...');">
+                <div class="form-group">
+                    <label for="request-type"><i class="fa-solid fa-layer-group"></i> Request Type</label>
+                    <select id="request-type" required onchange="updateBtnText()">
+                        <option value="" disabled selected>Select an option...</option>
+                        <option value="scholarship">View Available Scholarships</option>
+                        <option value="travel">Request Official Travel</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="start-date"><i class="fa-regular fa-calendar-check"></i> Start Date</label>
+                    <input type="date" id="start-date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="end-date"><i class="fa-regular fa-calendar-xmark"></i> End Date</label>
+                    <input type="date" id="end-date" required>
+                </div>
+                
+                <div class="form-group btn-group">
+                    <button type="submit" class="search-btn" id="action-btn">
+                        Proceed <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <section class="dark-dashboard">
+            <div class="dark-dashboard-inner">
+
+                <div class="video-showcase">
+                    <div class="video-header-bar">
+                        <div class="video-title">
+                            <i class="fa-solid fa-satellite-dish" style="color: var(--bsp-yellow); font-size: 1.2rem;"></i>
+                            <h3>SYS.COM // GLOBAL_SCHOLARS.MP4</h3>
+                        </div>
+                        <div class="live-indicator">
+                            <span class="dot"></span>
+                            TRANSMISSION
+                        </div>
+                    </div>
+                    <div class="video-wrapper">
+                        <video id="scholars-video" src="scholars.mp4" controls unmuted loop playsinline poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1920&auto=format&fit=crop"></video>
+                    </div>
+                </div>
+                
+                <div class="dashboard-header">
+                    <h2>Key Rates & Analytics</h2>
+                    <span class="chevron">❯</span>
+                </div>
+
+                <div class="grid-layout">
+                    <div class="bsp-card">
+                        <div class="card-title-row">
+                            <h3 class="chart-title">Invitations Alignment</h3>
+                            <span class="card-chevron">❯</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="invitationChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bsp-card">
+                        <div class="card-title-row">
+                            <h3 class="chart-title">Personnel Training Status</h3>
+                            <span class="card-chevron">❯</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="trainingChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bsp-card">
+                        <div class="card-title-row">
+                            <h3 class="chart-title">Training Focus Areas</h3>
+                            <span class="card-chevron">❯</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="skillsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-layout">
+                    <div class="bsp-card" style="grid-column: span 2;">
+                        <div class="card-title-row">
+                            <h3 class="chart-title">Development Partners Status</h3>
+                            <span class="card-chevron">❯</span>
+                        </div>
+                        <div class="chart-container wide">
+                            <canvas id="devPartnersChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="bsp-card">
+                        <div class="card-title-row">
+                            <h3 class="chart-title">Non-Study Outcomes</h3>
+                            <span class="card-chevron">❯</span>
+                        </div>
+                        <div class="chart-container wide">
+                            <canvas id="nonStudyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </section>
     </main>
 
-        <footer id="contact-footer" style="position: relative; width: 100%; height: 400px; z-index: 10; overflow: hidden; background-color: #f4f4f4;">
+    <footer id="contact-footer" style="position: relative; width: 100%; height: 400px; z-index: 10; overflow: hidden; background-color: #f4f4f4;">
         <iframe id="google-map" src="https://maps.google.com/maps?q=Department+of+Transportation,+The+Columbia+Tower,+Ortigas+Avenue,+Mandaluyong+City&t=&z=16&ie=UTF8&iwloc=&output=embed" style="position: relative; z-index: 5; width: 100%; height: 100%; border: 0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         <div style="position: absolute; right: 5%; top: 50%; transform: translateY(-50%); z-index: 10; background-color: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 380px; color: #333;">
             <h3 style="margin-bottom: 15px; color: var(--secondary-color); font-size: 1.2rem; font-weight: 700;">Department of Transportation</h3>
@@ -153,22 +708,352 @@
         // Loading
         window.addEventListener('load', () => { setTimeout(() => { const l = document.getElementById('loader'); l.style.opacity = '0'; setTimeout(() => l.style.display = 'none', 500); }, 1200); });
         
-        // 404 Overlay logic
         function show404() { document.getElementById('not-found').style.display = 'flex'; }
         function hide404() { document.getElementById('not-found').style.display = 'none'; }
         
-        // Carousel
+        // Carousel Fix - Converting malformed object array into properly formatted string array
         const aestheticImages = [
-            "https://images.unsplash.com/photo-1552820728-8ac41f1ce891?q=80&w=1920&auto=format&fit=crop", "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1920&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1494145904049-0dca59b4bbad?q=80&w=1920&auto=format&fit=crop", "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?q=80&w=1920&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=1920&auto=format&fit=crop", "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=1920&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1514306688772-36cabf604c16?q=80&w=1920&auto=format&fit=crop", "https://images.unsplash.com/photo-1520066961639-ce4f055aa78e?q=80&w=1920&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1556656793-08538906a9f8?q=80&w=1920&auto=format&fit=crop", "https://images.unsplash.com/photo-1465056836643-15cea6cae98d?q=80&w=1920&auto=format&fit=crop",
-            "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1920&auto=format&fit=crop", "https://images.unsplash.com/photo-1500595046891-83fca510e5f0?q=80&w=1920&auto=format&fit=crop"
+            "dotr.png",
+            "jica.png",
+            "jds.jpg",
+            "aas.jfif",
+            "koica.png"
         ];
+        
         const slider = document.getElementById('slider'); let current = 0;
         aestheticImages.forEach((url, i) => { const slide = document.createElement('div'); slide.classList.add('carousel-slide'); if (i === 0) slide.classList.add('active'); slide.style.backgroundImage = `url('${url}')`; slider.appendChild(slide); });
         setInterval(() => { const slides = document.querySelectorAll('.carousel-slide'); slides[current].classList.remove('active'); current = (current + 1) % aestheticImages.length; slides[current].classList.add('active'); }, 4500);
+
+        // Date Settler Dynamic Button Script
+        function updateBtnText() {
+            const select = document.getElementById('request-type');
+            const btn = document.getElementById('action-btn');
+            
+            if (select.value === 'scholarship') {
+                btn.innerHTML = 'Find Scholarships <i class="fa-solid fa-magnifying-glass"></i>';
+            } else if (select.value === 'travel') {
+                btn.innerHTML = 'Submit Request <i class="fa-regular fa-paper-plane"></i>';
+            } else {
+                btn.innerHTML = 'Proceed <i class="fa-solid fa-arrow-right"></i>';
+            }
+        }
+
+        // Initialize dates to current local date
+        document.addEventListener("DOMContentLoaded", function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('start-date').setAttribute('min', today);
+            document.getElementById('end-date').setAttribute('min', today);
+
+            // NEW: Autoplay video when scrolled into view
+            const video = document.getElementById('scholars-video');
+            if (video) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            video.play().catch(e => console.log("Autoplay blocked", e));
+                        } else {
+                            video.pause();
+                        }
+                    });
+                }, { threshold: 0.5 }); // Plays when 50% visible
+                observer.observe(video);
+            }
+        });
+
+        // --- Chart.js Configurations ---
+        Chart.defaults.font.family = "'Montserrat', sans-serif";
+        Chart.defaults.font.weight = '500';
+        Chart.defaults.color = '#555';
+        Chart.defaults.plugins.tooltip.padding = 12;
+        Chart.defaults.plugins.tooltip.cornerRadius = 10;
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(8, 28, 66, 0.9)';
+        Chart.defaults.plugins.tooltip.titleFont.weight = '700';
+        Chart.defaults.plugins.tooltip.titleFont.size = 13;
+        Chart.defaults.plugins.tooltip.bodyFont.size = 12;
+        Chart.defaults.plugins.tooltip.boxPadding = 8;
+        Chart.defaults.plugins.tooltip.borderColor = 'rgba(245, 199, 33, 0.3)';
+        Chart.defaults.plugins.tooltip.borderWidth = 1;
+        Chart.defaults.plugins.tooltip.usePointStyle = true;
+
+        const colors = {
+            darkNavy: '#081c42',
+            blue: '#4a80c9',
+            lightBlue: '#9dbfe6',
+            maroon: '#800000',
+            red: '#c0504d'
+        };
+
+        // Chart animation configuration for smoother transitions
+        const chartAnimationConfig = {
+            duration: 1200,
+            easing: 'easeInOutQuart',
+            delay: (ctx) => {
+                let delay = 0;
+                if (ctx.type === 'data') {
+                    delay = ctx.dataIndex * 50;
+                }
+                return delay;
+            }
+        };
+
+        // 1. Invitations Chart
+        new Chart(document.getElementById('invitationChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Aligned', 'Not Aligned'],
+                datasets: [{
+                    data: [63, 37],
+                    backgroundColor: [colors.darkNavy, colors.maroon],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverOffset: 12,
+                    hoverBorderColor: 'rgba(245, 199, 33, 0.8)',
+                    hoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '55%',
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 12, weight: '600' },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                },
+                animation: chartAnimationConfig
+            }
+        });
+
+        // 2. Training Overview Chart
+        new Chart(document.getElementById('trainingChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Trained', 'No Training'],
+                datasets: [{
+                    data: [89, 11],
+                    backgroundColor: [colors.blue, colors.red],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverOffset: 12,
+                    hoverBorderColor: 'rgba(245, 199, 33, 0.8)',
+                    hoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '55%',
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 12, weight: '600' },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                },
+                animation: chartAnimationConfig
+            }
+        });
+
+        // 3. Skills Distribution Chart
+        new Chart(document.getElementById('skillsChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Functional', 'Leadership', 'Core'],
+                datasets: [{
+                    data: [49, 39, 12],
+                    backgroundColor: [colors.darkNavy, colors.blue, colors.lightBlue],
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverOffset: 12,
+                    hoverBorderColor: 'rgba(245, 199, 33, 0.8)',
+                    hoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '55%',
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 12, weight: '600' },
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                },
+                animation: chartAnimationConfig
+            }
+        });
+
+        // 4. Development Partners Status (Stacked Horizontal Bar)
+        new Chart(document.getElementById('devPartnersChart'), {
+            type: 'bar',
+            data: {
+                labels: ['SDG', 'KOICA', 'LKY', 'JDS', 'AAS'],
+                datasets: [
+                    { 
+                        label: 'Completed', 
+                        data: [1, 1, 1, 2, 2], 
+                        backgroundColor: colors.darkNavy,
+                        hoverBackgroundColor: '#0b2959',
+                        borderRadius: 6
+                    },
+                    { 
+                        label: 'Ongoing', 
+                        data: [1, 0, 0, 4, 5], 
+                        backgroundColor: colors.blue,
+                        hoverBackgroundColor: '#5890d9',
+                        borderRadius: 6
+                    },
+                    { 
+                        label: 'On-process', 
+                        data: [0, 0, 4, 3, 0], 
+                        backgroundColor: colors.lightBlue,
+                        hoverBackgroundColor: '#afd0f0',
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { 
+                        stacked: true, 
+                        grid: { display: true, color: 'rgba(0,0,0,0.05)' },
+                        ticks: { font: { weight: '600' } }
+                    },
+                    y: { 
+                        stacked: true, 
+                        grid: { display: false },
+                        ticks: { font: { weight: '600' } }
+                    }
+                },
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 12, weight: '600' },
+                            usePointStyle: true,
+                            pointStyle: 'rect'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.x;
+                            }
+                        }
+                    }
+                },
+                animation: chartAnimationConfig
+            }
+        });
+
+        // 5. Non-Study Application Chart (Vertical Bar)
+        new Chart(document.getElementById('nonStudyChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Non-Study'],
+                datasets: [
+                    { 
+                        label: 'Accepted', 
+                        data: [19], 
+                        backgroundColor: colors.darkNavy,
+                        hoverBackgroundColor: '#0b2959',
+                        borderRadius: 6,
+                        borderSkipped: false
+                    },
+                    { 
+                        label: 'Declined', 
+                        data: [3], 
+                        backgroundColor: colors.blue,
+                        hoverBackgroundColor: '#5890d9',
+                        borderRadius: 6,
+                        borderSkipped: false
+                    },
+                    { 
+                        label: 'Rejected', 
+                        data: [5], 
+                        backgroundColor: colors.lightBlue,
+                        hoverBackgroundColor: '#afd0f0',
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 25, 
+                        grid: { color: '#e8e8e8' },
+                        ticks: { font: { weight: '600' } }
+                    },
+                    x: { 
+                        grid: { display: false },
+                        ticks: { font: { weight: '600' } }
+                    }
+                },
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            font: { size: 12, weight: '600' },
+                            usePointStyle: true,
+                            pointStyle: 'rect'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y;
+                            }
+                        }
+                    }
+                },
+                animation: chartAnimationConfig
+            }
+        });
     </script>
 </body>
 </html>
